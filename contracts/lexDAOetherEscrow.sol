@@ -9,8 +9,8 @@ contract lexDAOetherEscrow {
     string public details;
     bool public disputed;
     
-    constructor(address payable _seller, string memory _details) payable public {
-        buyer = msg.sender;
+    constructor(address payable _buyer, address payable _seller, string memory _details) payable public {
+        buyer = _buyer;
         seller = _seller;
         price = msg.value;
         details = _details;
@@ -38,5 +38,38 @@ contract lexDAOetherEscrow {
     
     function getBalance() public view returns (uint256) {
         return address(this).balance;
+    }
+}
+
+contract lexDAOetherEscrowFactory {
+    
+    lexDAOetherEscrow private EE;
+    
+    address[] public escrows;
+    
+    event Deployed(address indexed lexDAOetherEscrow, address indexed _buyer);
+    
+    function newlexDAOetherEscrow(
+        address payable _buyer, 
+        address payable _seller, 
+        string memory _details) payable public {
+       
+        EE = new lexDAOetherEscrow(
+            _buyer,
+            _seller,
+            _details);
+        
+        escrows.push(address(EE));
+        
+        emit Deployed(address(EE), _buyer);
+
+    }
+    
+    function getEscrowCount() public view returns (uint256 escrowCount) {
+        return escrows.length;
+    }
+    
+    function getEscrowAddresses() public view returns (address[] memory) {
+        return escrows;
     }
 }
