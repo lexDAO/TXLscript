@@ -9,7 +9,10 @@ contract lexDAOetherEscrow {
     string public details;
     bool public disputed;
     
-    constructor(address payable _buyer, address payable _seller, string memory _details) payable public {
+    constructor(
+        address payable _buyer, 
+        address payable _seller, 
+        string memory _details) payable public {
         buyer = _buyer;
         seller = _seller;
         price = msg.value;
