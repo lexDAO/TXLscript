@@ -5,17 +5,14 @@ contract lexDAOetherEscrow {
     address payable public buyer;
     address payable public seller;
     address payable public arbitrator = 0xE5579C0FAC49B7bC032B11D019AB98A614e49D34;
-    address private complainant;
     uint256 public price;
     string public details;
     string public complaint;
-    string public response;
     bool public disputed;
     bool public closed;
     
     event Released(uint256 indexed price);
     event Disputed(address indexed complainant);
-    event Responded(address indexed respondent);
     event Resolved(uint256 indexed buyerAward, uint256 indexed sellerAward);
     
     constructor(
@@ -44,15 +41,6 @@ contract lexDAOetherEscrow {
         emit Disputed(msg.sender);
     }
     
-    function respond(string memory _response) public {
-        require(msg.sender == buyer || msg.sender == seller);
-        require(msg.sender != complainant);
-        require(closed == false);
-        disputed = true;
-        response = _response;
-        emit Responded(msg.sender);
-    }
-    
     function resolve(uint256 buyerAward, uint256 sellerAward) public {
         require(msg.sender == arbitrator);
         require(disputed == true);
@@ -72,25 +60,30 @@ contract lexDAOetherEscrow {
 
 contract lexDAOetherEscrowFactory {
     
-    lexDAOetherEscrow private EE;
+    uint8 LEEversion = 1;
+    
+    lexDAOetherEscrow private LEE;
     
     address[] public escrows;
     
-    event Deployed(address indexed lexDAOetherEscrow, address indexed _buyer);
+    event Deployed(
+        address indexed lexDAOetherEscrow, 
+        address indexed _buyer, 
+        address indexed _seller);
     
     function newlexDAOetherEscrow(
         address payable _buyer, 
         address payable _seller, 
         string memory _details) payable public {
        
-        EE = (new lexDAOetherEscrow).value(msg.value)(
+        LEE = (new lexDAOetherEscrow).value(msg.value)(
             _buyer,
             _seller,
             _details);
         
-        escrows.push(address(EE));
+        escrows.push(address(LEE));
         
-        emit Deployed(address(EE), _buyer);
+        emit Deployed(address(LEE), _buyer, _seller);
 
     }
     
