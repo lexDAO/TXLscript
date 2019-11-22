@@ -64,9 +64,9 @@ contract lexDAOetherEscrow {
 
 contract lexDAOetherEscrowFactory {
     
-    uint8 LEEversion = 1;
+    uint8 public LEEversion = 1;
     
-    address payable public arbitrator = 0xE5579C0FAC49B7bC032B11D019AB98A614e49D34;
+    address payable public arbitrator = 0x97103fda00a2b47EaC669568063C00e65866a633; // lexDAO Agent
     
     lexDAOetherEscrow private LEE;
     
