@@ -1,10 +1,12 @@
 pragma solidity ^0.5.2;
 
+// LEE is a digital escrow program in beta. Use at your own risk. || lexDAO ||
+
 contract lexDAOetherEscrow {
     
     address payable public buyer;
     address payable public seller;
-    address payable public arbitrator = 0xE5579C0FAC49B7bC032B11D019AB98A614e49D34;
+    address payable public arbitrator;
     uint256 public price;
     string public details;
     string public complaint;
@@ -17,10 +19,12 @@ contract lexDAOetherEscrow {
     
     constructor(
         address payable _buyer,
-        address payable _seller, 
+        address payable _seller,
+        address payable _arbitrator,
         string memory _details) payable public {
         buyer = _buyer;
         seller = _seller;
+        arbitrator = _arbitrator;
         price = msg.value;
         details = _details;
     }
@@ -62,6 +66,8 @@ contract lexDAOetherEscrowFactory {
     
     uint8 LEEversion = 1;
     
+    address payable public arbitrator = 0xE5579C0FAC49B7bC032B11D019AB98A614e49D34;
+    
     lexDAOetherEscrow private LEE;
     
     address[] public escrows;
@@ -70,14 +76,18 @@ contract lexDAOetherEscrowFactory {
         address indexed lexDAOetherEscrow, 
         address indexed _buyer, 
         address indexed _seller);
+        
+    event ArbUpdated(address indexed newArb);
     
-    function newlexDAOetherEscrow(
+    function newLEE(
         address payable _seller, 
         string memory _details) payable public {
+        require(arbitrator != address(0));
            
         LEE = (new lexDAOetherEscrow).value(msg.value)(
             msg.sender,
             _seller,
+            arbitrator,
             _details);
         
         escrows.push(address(LEE));
@@ -92,5 +102,12 @@ contract lexDAOetherEscrowFactory {
     
     function getEscrowAddresses() public view returns (address[] memory) {
         return escrows;
+    }
+    
+    function updateArbitrator(address payable newArb) public {
+        require(msg.sender == arbitrator);
+        arbitrator = newArb;
+        
+        emit ArbUpdated(newArb);
     }
 }
