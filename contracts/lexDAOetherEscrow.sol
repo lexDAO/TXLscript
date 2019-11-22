@@ -1,13 +1,22 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 contract lexDAOetherEscrow {
     
     address payable public buyer;
     address payable public seller;
-    address payable public arbitrator = 0x97103fda00a2b47EaC669568063C00e65866a633;
+    address payable public arbitrator = 0xE5579C0FAC49B7bC032B11D019AB98A614e49D34;
+    address private complainant;
     uint256 public price;
     string public details;
+    string public complaint;
+    string public response;
     bool public disputed;
+    bool public closed;
+    
+    event Released(uint256 indexed price);
+    event Disputed(address indexed complainant);
+    event Responded(address indexed respondent);
+    event Resolved(uint256 indexed buyerAward, uint256 indexed sellerAward);
     
     constructor(
         address payable _buyer, 
@@ -19,24 +28,41 @@ contract lexDAOetherEscrow {
         details = _details;
     }
     
-    function dispute() public {
-        require(msg.sender == buyer || msg.sender == seller);
-        disputed == true;
-    }
-    
     function release() public {
         require(msg.sender == buyer);
-        require(disputed = false);
+        require(disputed == false);
         address(seller).transfer(price);
+        closed = true;
+        emit Released(price);
+    }
+    
+    function dispute(string memory _complaint) public {
+        require(msg.sender == buyer || msg.sender == seller);
+        require(closed == false);
+        disputed = true;
+        complaint = _complaint;
+        emit Disputed(msg.sender);
+    }
+    
+    function respond(string memory _response) public {
+        require(msg.sender == buyer || msg.sender == seller);
+        require(msg.sender != complainant);
+        require(closed == false);
+        disputed = true;
+        response = _response;
+        emit Responded(msg.sender);
     }
     
     function resolve(uint256 buyerAward, uint256 sellerAward) public {
         require(msg.sender == arbitrator);
-        require(disputed = true);
-        uint256 arbFee = address(this).balance / 20;
+        require(disputed == true);
+        uint256 arbFee = price / 20;
+        require(buyerAward + sellerAward + arbFee == price);
         address(buyer).transfer(buyerAward);
         address(seller).transfer(sellerAward);
         address(arbitrator).transfer(arbFee);
+        closed = true;
+        emit Resolved(buyerAward, sellerAward);
     }
     
     function getBalance() public view returns (uint256) {
@@ -57,7 +83,7 @@ contract lexDAOetherEscrowFactory {
         address payable _seller, 
         string memory _details) payable public {
        
-        EE = new lexDAOetherEscrow(
+        EE = (new lexDAOetherEscrow).value(msg.value)(
             _buyer,
             _seller,
             _details);
