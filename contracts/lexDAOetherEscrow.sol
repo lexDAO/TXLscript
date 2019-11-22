@@ -16,7 +16,7 @@ contract lexDAOetherEscrow {
     event Resolved(uint256 indexed buyerAward, uint256 indexed sellerAward);
     
     constructor(
-        address payable _buyer, 
+        address payable _buyer,
         address payable _seller, 
         string memory _details) payable public {
         buyer = _buyer;
@@ -72,18 +72,17 @@ contract lexDAOetherEscrowFactory {
         address indexed _seller);
     
     function newlexDAOetherEscrow(
-        address payable _buyer, 
         address payable _seller, 
         string memory _details) payable public {
-       
+           
         LEE = (new lexDAOetherEscrow).value(msg.value)(
-            _buyer,
+            msg.sender,
             _seller,
             _details);
         
         escrows.push(address(LEE));
         
-        emit Deployed(address(LEE), _buyer, _seller);
+        emit Deployed(address(LEE), msg.sender, _seller);
 
     }
     
