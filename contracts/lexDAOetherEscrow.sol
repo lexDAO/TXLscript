@@ -93,7 +93,6 @@ contract lexDAOetherEscrowFactory {
         escrows.push(address(LEE));
         
         emit Deployed(address(LEE), msg.sender, _seller);
-
     }
     
     function getEscrowCount() public view returns (uint256 escrowCount) {
