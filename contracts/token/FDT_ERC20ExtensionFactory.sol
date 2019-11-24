@@ -866,9 +866,6 @@ contract FDT_ERC20Extension is IFundsDistributionToken, FundsDistributionToken {
 	// balance of fundsToken that the FundsDistributionToken currently holds
 	uint256 public fundsTokenBalance;
 
-  // msg.sender to factory holds minter role
-  address private initialOwner;
-
 	modifier onlyFundsToken () {
 		require(msg.sender == address(fundsToken), "FDT_ERC20Extension.onlyFundsToken: UNAUTHORIZED_SENDER");
 		_;
@@ -878,7 +875,8 @@ contract FDT_ERC20Extension is IFundsDistributionToken, FundsDistributionToken {
 		string memory name, 
 		string memory symbol,
 		IERC20 _fundsToken,
-    address _initialOwner
+        address initialOwner,
+        uint256 initialAmount
 	) 
 		public 
 		FundsDistributionToken(name, symbol)
@@ -886,8 +884,8 @@ contract FDT_ERC20Extension is IFundsDistributionToken, FundsDistributionToken {
 		require(address(_fundsToken) != address(0), "FDT_ERC20Extension: INVALID_FUNDS_TOKEN_ADDRESS");
 
 		fundsToken = _fundsToken;
-    initialOwner = _initialOwner;
-    _addMinter(initialOwner);
+        _addMinter(initialOwner);
+        _mint(initialOwner, initialAmount);
 	}
 
 	/**
@@ -931,6 +929,7 @@ contract FDT_ERC20Extension is IFundsDistributionToken, FundsDistributionToken {
 }
 
 contract FDT_ERC20ExtensionFactory {
+    // presented by OpenEsquire || lexDAO
     
     FDT_ERC20Extension private FDT;
     
@@ -940,14 +939,16 @@ contract FDT_ERC20ExtensionFactory {
     
     function newFDT(
         string memory name, 
-		    string memory symbol,
-		    IERC20 _fundsToken) public {
+		string memory symbol,
+		IERC20 _fundsToken,
+		uint256 initialAmount) public {
        
         FDT = new FDT_ERC20Extension(
             name, 
             symbol, 
             _fundsToken,
-            msg.sender);
+            msg.sender,
+            initialAmount);
         
         tokens.push(address(FDT));
         
