@@ -859,7 +859,7 @@ contract FundsDistributionToken is IFundsDistributionToken, ERC20Detailed, ERC20
 	}
 }
 
-contract FDT_ERC20Extension is IFundsDistributionToken, FundsDistributionToken {
+contract FDT_ERC20Extension is FundsDistributionToken {
 
 	using SafeMathUint for uint256;
 	using SafeMathInt for int256;
