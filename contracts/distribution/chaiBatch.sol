@@ -11,7 +11,7 @@ contract chaiBatch {
     
     function distributeChai(address[] memory recipients, uint256 chaiSum)  public {
         for (uint256 i = 0; i < recipients.length; i++) {
-		    chai.transferFrom(msg.sender, recipients[i], chaiSum);
+		chai.transferFrom(msg.sender, recipients[i], chaiSum);
         }
     }
 }
