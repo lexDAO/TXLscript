@@ -8,7 +8,7 @@ contract tknBatch {
  
     function distributeTkn(address[] memory recipients, uint256 tknSum, IERC20 tknAddress)  public {
         for (uint256 i = 0; i < recipients.length; i++) {
-		      tknAddress.transferFrom(msg.sender, recipients[i], tknSum);
+		tknAddress.transferFrom(msg.sender, recipients[i], tknSum);
         }
     }
 }
