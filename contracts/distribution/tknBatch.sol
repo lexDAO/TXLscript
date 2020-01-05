@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract tknBatch {
     using SafeMath for uint256;
  
-    function distributeTkn(address[] memory recipients, uint256 tknSum, IERC20 tknAddress)  public {
+    function distributeTkn(uint256[] memory tknSum, IERC20 tknAddress, address[] memory recipients)  public {
         for (uint256 i = 0; i < recipients.length; i++) {
-		tknAddress.transferFrom(msg.sender, recipients[i], tknSum);
+		tknAddress.transferFrom(msg.sender, recipients[i], tknSum[i]);
         }
     }
 }
