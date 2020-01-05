@@ -946,12 +946,12 @@ contract FDT_ERC20Extension_MULTI_Factory {
     event Deployed(address indexed FDT);
     
     function newFDT(
-        string memory name, 
-		    string memory symbol,
-		    IERC20 _fundsToken,
-		    address initialMinter,
-		    address[] memory initialOwner,
-		    uint256[] memory initialAmount) public {
+        	string memory name, 
+		string memory symbol,
+		IERC20 _fundsToken,
+		address initialMinter,
+		address[] memory initialOwner,
+		uint256[] memory initialAmount) public {
        
         FDT = new FDT_ERC20Extension_MULTI(
             name, 
